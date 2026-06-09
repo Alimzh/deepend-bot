@@ -15,7 +15,7 @@ from telegram.ext import (
     filters,
 )
 
-TOKEN = "YOUR_TOKEN"
+TOKEN = "8900626345:AAF59d1piwpWgy-i7wFAoH_2kAV4L6CoElY"
 OWNER_ID = 557486407
 
 # ======================
