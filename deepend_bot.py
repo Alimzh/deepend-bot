@@ -258,7 +258,15 @@ async def cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # END
     elif d == "end":
         hard_reset(uid)
-        await go_start(update, context)
+
+        msg = update.callback_query.message
+
+        text = "👋 به منوی اصلی برگشتی"
+
+        try:
+            await msg.edit_text(text, reply_markup=MAIN_MENU)
+        except:
+            await msg.edit_caption(text, reply_markup=MAIN_MENU)
 
 # ======================
 # CONTENT
