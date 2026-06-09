@@ -4,4 +4,3 @@ services:
     env: python
     buildCommand: pip install -r requirements.txt
     startCommand: python deepend_bot.py
-    runtime: python-3.11.9
