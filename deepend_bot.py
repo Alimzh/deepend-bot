@@ -253,13 +253,18 @@ async def cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif d == "end":
         hard_reset(uid)
 
-        msg = update.callback_query.message
-        text = "🏠 برگشت به منو اصلی"
+        kb = MAIN
 
         try:
-            await msg.edit_text(text, reply_markup=MAIN)
+            await update.callback_query.message.edit_text(
+                "🎬 به Deepend Bot خوش اومدی",
+                reply_markup=kb
+            )
         except:
-            await msg.edit_caption(text, reply_markup=MAIN)
+            await update.callback_query.message.reply_text(
+                "🎬 به Deepend Bot خوش اومدی",
+               reply_markup=kb
+            )
 
 # ======================
 # CONTENT
