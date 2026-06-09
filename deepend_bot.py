@@ -59,25 +59,19 @@ def add_spam(uid):
 # START
 # ======================
 async def go_start(update, context):
-    from telegram import InlineKeyboardMarkup, InlineKeyboardButton
-
-    kb = InlineKeyboardMarkup([
-        [InlineKeyboardButton("📖 ارسال داستان و خاطرات", callback_data="story")],
-        [InlineKeyboardButton("💬 پیشنهاد و انتقاد", callback_data="feedback")],
-        [InlineKeyboardButton("👤 ارتباط با من", url=f"https://t.me/{OWNER_USERNAME}")],
-        [InlineKeyboardButton("📺 کانال یوتیوب Deepend", url="https://youtube.com/@adeepend")]
-    ])
+    kb = MAIN
+    text = "🎬 به Deepend Bot خوش اومدی"
 
     if update.callback_query:
-        await update.callback_query.message.edit_caption(
-            "آماده‌ای داستانتو تعریف کنی؟",
-            reply_markup=kb
-        )
+        msg = update.callback_query.message
+
+        try:
+            await msg.edit_caption(text, reply_markup=kb)
+        except:
+            await msg.edit_text(text, reply_markup=kb)
+
     else:
-        await update.message.reply_text(
-            "آماده‌ای داستانتو تعریف کنی؟",
-            reply_markup=kb
-        )
+        await update.message.reply_text(text, reply_markup=kb)
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
     hard_reset(uid)
@@ -260,13 +254,12 @@ async def cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
         hard_reset(uid)
 
         msg = update.callback_query.message
-
-        text = "👋 به منوی اصلی برگشتی"
+        text = "🏠 برگشت به منو اصلی"
 
         try:
-            await msg.edit_text(text, reply_markup=MAIN_MENU)
+            await msg.edit_text(text, reply_markup=MAIN)
         except:
-            await msg.edit_caption(text, reply_markup=MAIN_MENU)
+            await msg.edit_caption(text, reply_markup=MAIN)
 
 # ======================
 # CONTENT
