@@ -15,7 +15,7 @@ from telegram.ext import (
     filters,
 )
 
-TOKEN = "8900626345:AAF59d1piwpWgy-i7wFAoH_2kAV4L6CoElY"
+TOKEN = "YOUR_TOKEN"
 OWNER_ID = 557486407
 
 # ======================
@@ -24,6 +24,7 @@ OWNER_ID = 557486407
 
 state = {}
 data = {}
+ui_message = {}
 spam_counter = defaultdict(int)
 
 # هر session = یک “ارسال واقعی”
@@ -69,28 +70,26 @@ def add_send(uid):
 # ======================
 
 async def safe_edit(query, text, kb):
-    try:
-        await query.message.edit_text(text, reply_markup=kb)
-    except:
-        try:
-            await query.message.edit_caption(text, reply_markup=kb)
-        except:
-            await query.message.reply_text(text, reply_markup=kb)
-
+    await query.message.edit_caption(
+        caption=text,
+        reply_markup=kb
+    )
 # ======================
 # START
 # ======================
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
+
     reset_user(uid)
 
-    await update.message.reply_photo(
+    sent = await update.message.reply_photo(
         photo=open("botStart.jpg", "rb"),
         caption=MAIN_TEXT,
         reply_markup=MAIN_KB
     )
 
+    ui_message[uid] = sent.message_id
 # ======================
 # CALLBACK
 # ======================
