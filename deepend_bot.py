@@ -69,8 +69,10 @@ def add_send(uid):
 # SAFE EDIT
 # ======================
 
-async def safe_edit(query, text, kb):
-    await query.message.edit_caption(
+async def safe_edit(query, context, uid, text, kb):
+    await context.bot.edit_message_caption(
+        chat_id=query.message.chat_id,
+        message_id=ui_message[uid],
         caption=text,
         reply_markup=kb
     )
@@ -104,7 +106,7 @@ async def cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # RESET TO START
     if d == "back" or d == "end":
         reset_user(uid)
-        await safe_edit(q, MAIN_TEXT, MAIN_KB)
+        await safe_edit(q, context, uid, MAIN_TEXT, MAIN_KB)
         return
 
     # ================= STORY =================
@@ -119,7 +121,7 @@ async def cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton("🔙 بازگشت", callback_data="end")]
         ])
 
-        await safe_edit(q, "لطفا نوع داستانتو انتخاب کن", kb)
+        await safe_edit(q, context, uid, "لطفا نوع داستانتو انتخاب کن", kb)
 
     elif d.startswith("cat_"):
         state[uid] = "story_anon"
@@ -137,7 +139,7 @@ async def cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton("🔁 تغییر نوع داستان", callback_data="story")]
         ])
 
-        await safe_edit(q, "میخوای داستانتو ناشناس بفرستی؟", kb)
+        await safe_edit(q, context, uid, "میخوای داستانتو ناشناس بفرستی؟", kb)
 
     elif d in ["sa", "sn"]:
         state[uid] = "writing_story"
@@ -149,6 +151,8 @@ async def cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await safe_edit(
             q,
+            context,
+            uid,
             "لطفا داستانتو بنویس یا ویس/عکس/ویدیو ارسال کن",
             kb
         )
@@ -164,7 +168,7 @@ async def cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton("🔙 بازگشت", callback_data="end")]
         ])
 
-        await safe_edit(q, "میخوای ناشناس ارسال کنی؟", kb)
+        await safe_edit(q, context, uid, "میخوای ناشناس ارسال کنی؟", kb)
 
     elif d in ["fa", "fn"]:
         state[uid] = "writing_feedback"
@@ -174,7 +178,7 @@ async def cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton("❌ انصراف", callback_data="end")]
         ])
 
-        await safe_edit(q, "پیشنهاد یا انتقادتو بفرست", kb)
+        await safe_edit(q, context, uid, "پیشنهاد یا انتقادتو بفرست", kb)
 
 # ======================
 # MESSAGE HANDLER
