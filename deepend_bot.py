@@ -107,6 +107,8 @@ async def cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # RESET TO START
     if d == "back" or d == "end":
 
+        current_state = state.get(uid)
+
         try:
             await q.message.delete()
         except:
@@ -119,6 +121,20 @@ async def cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         except:
             pass
+
+        if d == "end":
+
+            if current_state == "writing_story":
+                await context.bot.send_message(
+                    q.message.chat_id,
+                    "✅ داستانت با موفقیت ارسال شد.\nممنون از اعتمادت"
+                )
+
+            elif current_state == "writing_feedback":
+                await context.bot.send_message(
+                    q.message.chat_id,
+                    "✅ پیامت با موفقیت ارسال شد.\nممنون از وقتی که گذاشتی"
+                )
 
         reset_user(uid)
 
