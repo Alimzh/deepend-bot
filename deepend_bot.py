@@ -25,6 +25,7 @@ OWNER_ID = 557486407
 state = {}
 data = {}
 ui_message = {}
+followup_message = {}
 spam_counter = defaultdict(int)
 
 # هر session = یک “ارسال واقعی”
@@ -275,12 +276,25 @@ async def content(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         session_sent[uid] = True
 
-        await msg.reply_text(
+        old_msg = followup_message.get(uid)
+
+        if old_msg:
+            try:
+                await context.bot.delete_message(
+                    chat_id=msg.chat_id,
+                    message_id=old_msg
+                )
+            except:
+                pass
+        
+        sent = await msg.reply_text(
             "اگر هنوز مونده لطفا ادامه بده",
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("🏁 پایان", callback_data="end")]
             ])
         )
+
+        followup_message[uid] = sent.message_id
 
     # ================= FEEDBACK =================
 
@@ -299,12 +313,26 @@ async def content(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         session_sent[uid] = True
 
-        await msg.reply_text(
+        old_msg = followup_message.get(uid)
+
+        if old_msg:
+            try:
+                await context.bot.delete_message(
+                    chat_id=msg.chat_id,
+                    message_id=old_msg
+                )
+            except:
+                pass
+        
+        sent = await msg.reply_text(
             "اگر هنوز مونده لطفا ادامه بده",
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("🏁 پایان", callback_data="end")]
             ])
         )
+
+        followup_message[uid] = sent.message_id
+
 
 # ======================
 # SEND OWNER
