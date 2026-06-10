@@ -68,14 +68,15 @@ def add_send(uid):
 # ======================
 # SAFE EDIT
 # ======================
-
-async def safe_edit(query, context, uid, text, kb):
-    await context.bot.edit_message_caption(
-        chat_id=query.message.chat_id,
-        message_id=ui_message[uid],
-        caption=text,
-        reply_markup=kb
+async def show_start(chat_id, context, uid):
+    sent = await context.bot.send_photo(
+        chat_id=chat_id,
+        photo=open("botStart.jpg", "rb"),
+        caption=MAIN_TEXT,
+        reply_markup=MAIN_KB
     )
+
+    ui_message[uid] = sent.message_id
 # ======================
 # START
 # ======================
@@ -105,8 +106,28 @@ async def cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # RESET TO START
     if d == "back" or d == "end":
+
+        try:
+            await q.message.delete()
+        except:
+            pass
+
+        try:
+            await context.bot.delete_message(
+                chat_id=q.message.chat_id,
+                message_id=ui_message[uid]
+            )
+        except:
+            pass
+
         reset_user(uid)
-        await safe_edit(q, context, uid, MAIN_TEXT, MAIN_KB)
+
+        await show_start(
+            q.message.chat_id,
+            context,
+            uid
+        )
+
         return
 
     # ================= STORY =================
@@ -121,7 +142,7 @@ async def cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton("🔙 بازگشت", callback_data="end")]
         ])
 
-        await safe_edit(q, context, uid, "لطفا نوع داستانتو انتخاب کن", kb)
+        await q.message.edit_caption(caption="لطفا نوع داستانتو انتخاب کن", reply_markup=kb)
 
     elif d.startswith("cat_"):
         state[uid] = "story_anon"
@@ -139,7 +160,7 @@ async def cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton("🔁 تغییر نوع داستان", callback_data="story")]
         ])
 
-        await safe_edit(q, context, uid, "میخوای داستانتو ناشناس بفرستی؟", kb)
+        await q.message.edit_caption(caption="میخوای داستانتو ناشناس بفرستی؟", reply_markup=kb)
 
     elif d in ["sa", "sn"]:
         state[uid] = "writing_story"
@@ -149,12 +170,9 @@ async def cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton("❌ انصراف", callback_data="end")]
         ])
 
-        await safe_edit(
-            q,
-            context,
-            uid,
-            "لطفا داستانتو بنویس یا ویس/عکس/ویدیو ارسال کن",
-            kb
+        await q.message.edit_caption(
+            caption="لطفا داستانتو بنویس یا ویس/عکس/ویدیو ارسال کن",
+            reply_markup=kb
         )
 
     # ================= FEEDBACK =================
@@ -168,7 +186,7 @@ async def cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton("🔙 بازگشت", callback_data="end")]
         ])
 
-        await safe_edit(q, context, uid, "میخوای ناشناس ارسال کنی؟", kb)
+        await q.message.edit_caption(caption="میخوای ناشناس ارسال کنی؟", reply_markup=kb)
 
     elif d in ["fa", "fn"]:
         state[uid] = "writing_feedback"
@@ -178,7 +196,7 @@ async def cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton("❌ انصراف", callback_data="end")]
         ])
 
-        await safe_edit(q, context, uid, "پیشنهاد یا انتقادتو بفرست", kb)
+        await q.message.edit_caption(caption="پیشنهاد یا انتقادتو بفرست", reply_markup=kb)
 
 # ======================
 # MESSAGE HANDLER
