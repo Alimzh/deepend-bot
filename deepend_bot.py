@@ -104,30 +104,30 @@ async def cb(update: Update, context: ContextTypes.DEFAULT_TYPE):
     uid = q.from_user.id
     d = q.data
 
-if d == "cancel":
+    if d == "cancel":
 
-    try:
-        await q.message.delete()
-    except:
-        pass
+        try:
+            await q.message.delete()
+        except:
+            pass
 
-    try:
-        await context.bot.delete_message(
-            chat_id=q.message.chat_id,
-            message_id=ui_message[uid]
+        try:
+            await context.bot.delete_message(
+                chat_id=q.message.chat_id,
+                message_id=ui_message[uid]
+            )
+        except:
+            pass
+
+        reset_user(uid)
+
+        await show_start(
+            q.message.chat_id,
+            context,
+            uid
         )
-    except:
-        pass
 
-    reset_user(uid)
-
-    await show_start(
-        q.message.chat_id,
-        context,
-        uid
-    )
-
-    return
+        return
     
     # RESET TO START
     if d == "back" or d == "end":
